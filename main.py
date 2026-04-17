@@ -1,21 +1,12 @@
-"""
-main.py — FastAPI application for the Customer Support Triage & Action system.
-
-Endpoints
----------
-POST /input            — Submit raw customer text for processing.
-POST /input/upload     — Upload a PDF or text file for processing.
-POST /process/{id}     — Execute the multi-step agentic workflow synchronously.
-GET  /results/{id}     — Retrieve stored processing results.
-GET  /health           — Liveness probe.
-"""
-
 from __future__ import annotations
 
 import io
 import logging
 import uuid
 from typing import Optional
+
+from dotenv import load_dotenv
+load_dotenv()
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
@@ -43,12 +34,7 @@ app = FastAPI(
 )
 
 
-# Models
-
-
 class InputRequest(BaseModel):
-    """Payload accepted by ``POST /input``."""
-
     text: str = Field(
         ...,
         min_length=1,
@@ -58,15 +44,11 @@ class InputRequest(BaseModel):
 
 
 class InputResponse(BaseModel):
-    """Returned by ``POST /input`` and ``POST /input/upload`` after storing the record."""
-
     input_id: str
     status: str
 
 
 class ProcessResponse(BaseModel):
-    """Returned by ``POST /process/{input_id}`` after workflow completion."""
-
     input_id: str
     status: str
     result: dict
@@ -74,8 +56,6 @@ class ProcessResponse(BaseModel):
 
 
 class ResultsResponse(BaseModel):
-    """Returned by ``GET /results/{input_id}``."""
-
     input_id: str
     status: str
     text: str
@@ -83,9 +63,6 @@ class ResultsResponse(BaseModel):
     steps: Optional[list]
     created_at: str
     completed_at: Optional[str]
-
-
-# Endpoints
 
 
 @app.post("/input", response_model=InputResponse, status_code=201)
@@ -98,7 +75,6 @@ def submit_input(payload: InputRequest):
 
 @app.post("/input/upload", response_model=InputResponse, status_code=201)
 async def upload_document(file: UploadFile = File(...)):
-    """Accept a ``.pdf`` or ``.txt`` file, extract its text, and store with status *pending*."""
     if file.filename is None:
         raise HTTPException(status_code=400, detail="Filename is required.")
 
@@ -133,10 +109,6 @@ async def upload_document(file: UploadFile = File(...)):
 
 @app.post("/process/{input_id}", response_model=ProcessResponse)
 def process_input(input_id: uuid.UUID, force: bool = False):
-    """Retrieve the pending input and run the full agentic workflow.
-
-    Pass ``?force=true`` to re-process an already-completed input.
-    """
     record = store.get(input_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Input ID not found.")
@@ -178,7 +150,6 @@ def process_input(input_id: uuid.UUID, force: bool = False):
 
 @app.get("/results/{input_id}", response_model=ResultsResponse)
 def get_results(input_id: uuid.UUID):
-    """Return the full stored record, including results if available."""
     record = store.get(input_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Input ID not found.")
@@ -196,5 +167,4 @@ def get_results(input_id: uuid.UUID):
 
 @app.get("/health")
 def health_check():
-    """Simple liveness probe."""
     return {"status": "ok"}

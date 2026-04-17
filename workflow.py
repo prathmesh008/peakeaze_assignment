@@ -1,15 +1,3 @@
-"""
-workflow.py — Agentic, multi-step processing pipeline.
-
-Orchestrates three sequential stages:
-  1. Intent Routing   — classify the raw text into an intent category.
-  2. Conditional Exec — run an intent-specific extraction prompt.
-  3. Confidence Score  — attach a reliability score to the final result.
-
-All Gemini calls use native ``response_schema`` for guaranteed structured
-output. A ``tenacity`` retry wrapper handles transient API failures.
-"""
-
 from __future__ import annotations
 
 import contextvars
@@ -54,20 +42,13 @@ def _get_client() -> genai.Client:
     return _client
 
 
-# Schemas
-
-
 class IntentCategory(str, Enum):
-    """Possible intent categories for customer support text."""
-
     TECHNICAL_SUPPORT = "Technical Support"
     BILLING_ISSUE = "Billing Issue"
     GENERAL_FEEDBACK = "General Feedback"
 
 
 class IntentRouting(BaseModel):
-    """Schema returned by the intent-classification step."""
-
     intent: IntentCategory = Field(
         description="The classified intent category of the customer message."
     )
@@ -77,15 +58,11 @@ class IntentRouting(BaseModel):
 
 
 class TroubleshootingStep(BaseModel):
-    """A single troubleshooting instruction."""
-
     step_number: int = Field(description="Ordinal position of this step.")
     instruction: str = Field(description="Clear, actionable instruction.")
 
 
 class TechnicalSupportResult(BaseModel):
-    """Extracted entities and troubleshooting guide."""
-
     entities: list[str] = Field(
         description="Software or hardware product names mentioned."
     )
@@ -98,8 +75,6 @@ class TechnicalSupportResult(BaseModel):
 
 
 class BillingIssueResult(BaseModel):
-    """Extracted monetary details and urgency assessment."""
-
     monetary_values: list[str] = Field(
         description="Dollar amounts or monetary figures mentioned."
     )
@@ -115,8 +90,6 @@ class BillingIssueResult(BaseModel):
 
 
 class GeneralFeedbackResult(BaseModel):
-    """Sentiment analysis and drafted automated response."""
-
     sentiment: str = Field(
         description="Overall sentiment: 'positive', 'neutral', or 'negative'."
     )
@@ -129,8 +102,6 @@ class GeneralFeedbackResult(BaseModel):
 
 
 class WorkflowResult(BaseModel):
-    """Top-level result returned after the full pipeline."""
-
     intent: IntentCategory
     intent_reasoning: str
     details: dict[str, Any]
@@ -142,8 +113,6 @@ class WorkflowResult(BaseModel):
 
 
 class ConfidenceEvaluation(BaseModel):
-    """Schema for the confidence-scoring step."""
-
     confidence_score: float = Field(
         ge=0.0,
         le=1.0,
@@ -152,9 +121,6 @@ class ConfidenceEvaluation(BaseModel):
     confidence_reasoning: str = Field(
         description="Brief rationale for the assigned confidence score."
     )
-
-
-# API Client
 
 
 @retry(
@@ -186,8 +152,6 @@ def _call_gemini(
     logger.debug("Raw response: %s", parsed)
     return parsed
 
-
-# Handlers
 
 _current_steps = contextvars.ContextVar("current_steps")
 
@@ -275,8 +239,6 @@ def _step3_confidence(text: str, intent: str, details: dict[str, Any]) -> dict[s
     return _call_gemini(prompt, ConfidenceEvaluation)
 
 
-# Orchestrator
-
 _INTENT_HANDLERS: dict[str, Any] = {
     IntentCategory.TECHNICAL_SUPPORT.value: _step2_technical_support,
     IntentCategory.BILLING_ISSUE.value: _step2_billing_issue,
@@ -285,13 +247,6 @@ _INTENT_HANDLERS: dict[str, Any] = {
 
 
 def run_workflow(text: str) -> dict[str, Any]:
-    """Execute the full 3-step agentic pipeline.
-
-    Returns a dict with two keys:
-
-    - ``result`` — the final :class:`WorkflowResult` as a dict.
-    - ``steps``  — a list of intermediate outputs from each stage.
-    """
     steps: list[dict[str, Any]] = []
     token = _current_steps.set(steps)
 
