@@ -1,3 +1,11 @@
+"""
+database.py — Lightweight in-memory storage layer.
+
+Uses a thread-safe dictionary to persist workflow inputs and results
+for the lifetime of the application process.  Swap this module for a
+real database adapter (SQLAlchemy / asyncpg) when moving to production.
+"""
+
 from __future__ import annotations
 
 import threading

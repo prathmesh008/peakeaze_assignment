@@ -1,3 +1,15 @@
+
+"""
+main.py — FastAPI application for the Customer Support Triage & Action system.
+
+Endpoints
+POST /input            — Submit raw customer text for processing.
+POST /input/upload     — Upload a PDF or text file for processing.
+POST /process/{id}     — Execute the multi-step agentic workflow synchronously.
+GET  /results/{id}     — Retrieve stored processing results.
+GET  /health           — Liveness probe.
+"""
+
 from __future__ import annotations
 
 import io

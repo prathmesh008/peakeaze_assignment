@@ -1,3 +1,16 @@
+"""
+workflow.py — Agentic, multi-step processing pipeline.
+
+Orchestrates three sequential stages:
+  1. Intent Routing   — classify the raw text into an intent category.
+  2. Conditional Exec — run an intent-specific extraction prompt.
+  3. Confidence Score  — attach a reliability score to the final result.
+
+All Gemini calls use native ``response_schema`` for guaranteed structured
+output. A ``tenacity`` retry wrapper handles transient API failures.
+"""
+
+
 from __future__ import annotations
 
 import contextvars
