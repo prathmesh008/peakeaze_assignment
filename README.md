@@ -5,7 +5,7 @@ An intelligent, API-based workflow system that acts as an automated dispatcher f
 Instead of relying on rigid keyword matching, this system uses an **Agentic LLM Workflow** to dynamically read, route, and extract structured data from support tickets, preparing them for immediate downstream processing.
 
 <p align="center">
-  <img src="assets/api_dashboard.png" alt="FastAPI Swagger UI Dashboard" width="800"/>
+  <img src="assets/dashboard.png" alt="FastAPI Swagger UI Dashboard" width="800"/>
 </p>
 
 ---
