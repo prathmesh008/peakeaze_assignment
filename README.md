@@ -35,9 +35,10 @@ Instead of relying on rigid keyword matching, this system uses an **Agentic LLM 
    ```
 
 3. **Set your environment variable:**
-   Export your Google Gemini API key. (Note: The system is configured to use `gemini-2.0-flash` for high-speed, low-cost reasoning).
+   Duplicate the `.env.example` file, rename it to `.env`, and insert your Google Gemini API key. (Note: The system is configured to use `gemini-2.0-flash` for high-speed, low-cost reasoning).
    ```bash
-   export GEMINI_API_KEY="your_api_key_here"
+   cp .env.example .env
+   # Edit .env and add your API key
    ```
 
 4. **Run the server:**

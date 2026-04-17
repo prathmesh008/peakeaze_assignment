@@ -20,6 +20,9 @@ from enum import Enum
 from functools import wraps
 from typing import Any
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
