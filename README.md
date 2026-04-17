@@ -10,7 +10,7 @@ Instead of relying on rigid keyword matching, this system uses an **Agentic LLM 
 
 ---
 
-## 🚀 Core Features
+## Core Features
 * **Agentic Routing:** The system doesn't just run a single prompt; it reads the intent and dynamically decides which extraction branch to execute (Technical Support, Billing, or General Feedback).
 * **Guaranteed Structured Output:** Bypasses "prompt-engineering-only" approaches by utilizing Pydantic models paired with the Gemini API's native `response_schema`, ensuring 100% deterministic JSON outputs.
 * **Document Processing:** Supports direct text ingestion or file uploads (`.txt` and `.pdf`).
@@ -19,7 +19,7 @@ Instead of relying on rigid keyword matching, this system uses an **Agentic LLM 
 
 ---
 
-## ⚙️ Setup & Installation
+## Setup & Installation
 
 **Prerequisites:** Python 3.9+
 
@@ -49,7 +49,7 @@ The API will be live at `http://127.0.0.1:8000`. You can access the interactive 
 
 ---
 
-## 📡 API Usage Examples
+## API Usage Examples
 
 <p align="center">
   <img src="assets/api_endpoints.png" alt="API Endpoints" width="800"/>
@@ -87,7 +87,7 @@ curl -X GET "http://127.0.0.1:8000/results/YOUR_UUID"
 
 ---
 
-## 🧠 Workflow Design Explanation
+## Workflow Design Explanation
 
 The system utilizes a **3-Step Triage & Action Pipeline**:
 
@@ -102,7 +102,7 @@ The system utilizes a **3-Step Triage & Action Pipeline**:
 
 ---
 
-## 🤖 AI Usage & Strategy
+## AI Usage & Strategy
 
 ### Prompt Design Approach
 I opted for a highly constrained, context-specific prompting approach. Rather than writing one massive "do everything" prompt, the prompts are isolated by concern. Step 1 only cares about intent. Step 2 only cares about precise data extraction for its specific domain. This separation of concerns heavily reduces LLM hallucinations.
@@ -116,7 +116,7 @@ Guaranteeing JSON output is a notoriously difficult problem in AI engineering. R
 
 ---
 
-## ⚖️ Engineering Trade-offs & Decisions
+## Engineering Trade-offs & Decisions
 
 ### Direct SDK Integration vs. Heavy Frameworks (LangChain)
 - **Decision:** I deliberately avoided using orchestrators like LangChain or LlamaIndex, opting to use the native `google-genai` SDK.
@@ -128,7 +128,7 @@ Guaranteeing JSON output is a notoriously difficult problem in AI engineering. R
 
 ---
 
-## 📈 Personal Reflection & Learning Curve
+## Personal Reflection & Learning Curve
 
 Building this system was a highly rewarding exercise in bridging the gap between "prompt engineering" and actual "software engineering."
 
