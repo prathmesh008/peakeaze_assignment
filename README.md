@@ -52,7 +52,10 @@ The API will be live at `http://127.0.0.1:8000`. You can access the interactive 
 ## API Usage Examples
 
 <p align="center">
-  <img src="assets/api_endpoints.png" alt="API Endpoints" width="800"/>
+  <img src="assets/API.png" alt="API Endpoints" width="800"/>
+</p>
+<p align="center">
+  <img src="assets/POST.png" alt="API Endpoints" width="800"/>
 </p>
 
 ### 1. Ingest Data
