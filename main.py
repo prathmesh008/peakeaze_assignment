@@ -18,7 +18,7 @@ import uuid
 from typing import Optional
 
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(override=True)
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
@@ -44,6 +44,13 @@ app = FastAPI(
     ),
     version="1.0.0",
 )
+
+
+@app.get("/", include_in_schema=False)
+def root_redirect():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/docs")
+
 
 
 class InputRequest(BaseModel):
@@ -142,6 +149,14 @@ def process_input(input_id: uuid.UUID, force: bool = False):
     except Exception as exc:
         store.update(input_id, status="failed")
         logger.exception("Workflow failed for input %s", input_id)
+        
+        error_msg = str(exc)
+        if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
+            raise HTTPException(
+                status_code=429,
+                detail="The AI provider rate limit was exceeded. Please try again later or verify your API key quota."
+            )
+            
         raise HTTPException(
             status_code=500,
             detail=f"Workflow processing failed: {exc}",

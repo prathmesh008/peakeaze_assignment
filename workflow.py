@@ -22,7 +22,7 @@ from functools import wraps
 from typing import Any
 
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(override=True)
 
 from google import genai
 from google.genai import types
@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 
 
 _client: genai.Client | None = None
-MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 
 def _get_client() -> genai.Client:
